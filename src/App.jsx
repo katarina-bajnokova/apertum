@@ -1,150 +1,685 @@
-import { useEffect, useMemo, useState } from "react";
-import "./App.scss";
+import { useEffect, useState } from "react";
 import {
-  getDailyState,
-  markDoneForToday,
-  resetForToday,
-} from "./storage/dailyState";
-import { isOnboardingComplete } from "./storage/onboarding";
-import { getAllSpaces, getSpace, getSet, getAllSets } from "./storage/spaces";
-import { getDailySessionItems, hasItemsToReview } from "./storage/learning";
-import Onboarding from "./components/Onboarding";
-import SpaceList from "./components/SpaceList";
-import SetList from "./components/SetList";
-import SetEditor from "./components/SetEditor";
-import LearningSession from "./components/LearningSession";
-import QuickReview from "./components/QuickReview";
+  IoChevronBack,
+  IoClose,
+  IoTrashOutline,
+  IoAdd,
+  IoBookOutline,
+  IoChevronForward,
+  IoFolderOutline,
+} from "react-icons/io5";
+import { motion } from "framer-motion";
+import "./AppSimple.scss";
 
 export default function App() {
-  const [state, setState] = useState({ status: "pending", dateKey: "" });
-  const [showOnboarding, setShowOnboarding] = useState(!isOnboardingComplete());
-  const [spaces, setSpaces] = useState([]);
-  const [selectedSpaceId, setSelectedSpaceId] = useState(null);
-  const [selectedSetId, setSelectedSetId] = useState(null);
-  const [inSession, setInSession] = useState(false);
-  const [sessionItems, setSessionItems] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [view, setView] = useState("home"); // home, topic, category, addTopic, addCategory, addItem
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState(null);
+  const [newTopicName, setNewTopicName] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newItemFront, setNewItemFront] = useState("");
+  const [newItemBack, setNewItemBack] = useState("");
+  const [newItemGroup, setNewItemGroup] = useState("");
+  const [deleteModal, setDeleteModal] = useState({
+    show: false,
+    type: null,
+    id: null,
+    name: null,
+  });
 
   useEffect(() => {
-    setState(getDailyState());
-    setSpaces(getAllSpaces());
+    loadTopics();
   }, []);
 
-  const isDone = useMemo(() => state.status === "done", [state.status]);
-  const selectedSpace = selectedSpaceId ? getSpace(selectedSpaceId) : null;
-  const selectedSet =
-    selectedSpaceId && selectedSetId
-      ? getSet(selectedSpaceId, selectedSetId)
-      : null;
+  async function loadTopics() {
+    const result = await chrome.storage.local.get("apertum.spaces");
+    const spaces = result["apertum.spaces"] || [];
+    setTopics(spaces);
+  }
 
-  function handleStartSession() {
-    if (!hasItemsToReview()) {
-      // No items to review - just mark done and show spaces
-      markDoneForToday();
-      setState(getDailyState());
-      return;
+  function handleAddTopicClick() {
+    setView("addTopic");
+  }
+
+  async function handleSaveNewTopic(e) {
+    e.preventDefault();
+    if (!newTopicName.trim()) return;
+
+    const newTopic = {
+      id: Date.now().toString(),
+      name: newTopicName.trim(),
+      sets: [],
+    };
+
+    const updated = [...topics, newTopic];
+    await chrome.storage.local.set({ "apertum.spaces": updated });
+    setTopics(updated);
+
+    setNewTopicName("");
+    setView("home");
+  }
+
+  function handleCancelAddTopic() {
+    setNewTopicName("");
+    setView("home");
+  }
+
+  async function handleDeleteTopic(e, topicId) {
+    e.stopPropagation();
+    const topic = topics.find((t) => t.id === topicId);
+    setDeleteModal({
+      show: true,
+      type: "topic",
+      id: topicId,
+      name: topic?.name,
+      onConfirm: async () => {
+        const updated = topics.filter((t) => t.id !== topicId);
+        await chrome.storage.local.set({ "apertum.spaces": updated });
+        setTopics(updated);
+        setDeleteModal({ show: false, type: null, id: null, name: null });
+        if (view === "topic") {
+          handleBackToHome();
+        }
+      },
+    });
+  }
+
+  function handleOpenTopic(topicId) {
+    setSelectedTopicId(topicId);
+    setView("topic");
+  }
+
+  function handleBackToHome() {
+    setSelectedTopicId(null);
+    setView("home");
+    loadTopics();
+  }
+
+  function handleAddItemClick() {
+    setView("addItem");
+  }
+
+  async function handleSaveNewItem(e) {
+    e.preventDefault();
+    if (!newItemFront.trim() || !newItemBack.trim()) return;
+
+    const updated = topics.map((topic) => {
+      if (topic.id === selectedTopicId) {
+        const newItem = {
+          id: Date.now().toString(),
+          front: newItemFront.trim(),
+          back: newItemBack.trim(),
+          group: newItemGroup.trim() || "General",
+        };
+
+        // Add to first set or create a default set
+        const sets =
+          topic.sets.length > 0
+            ? topic.sets.map((set, idx) =>
+                idx === 0
+                  ? { ...set, items: [...(set.items || []), newItem] }
+                  : set
+              )
+            : [
+                {
+                  id: Date.now().toString(),
+                  name: "Main",
+                  items: [newItem],
+                },
+              ];
+
+        return { ...topic, sets };
+      }
+      return topic;
+    });
+
+    await chrome.storage.local.set({ "apertum.spaces": updated });
+    setTopics(updated);
+    setNewItemFront("");
+    setNewItemBack("");
+    // Keep group if in category view, otherwise clear
+    if (!selectedCategoryName) {
+      setNewItemGroup("");
     }
-
-    const items = getDailySessionItems();
-    setSessionItems(items);
-    setInSession(true);
+    setView(selectedCategoryName ? "category" : "topic");
   }
 
-  function handleSessionComplete() {
-    markDoneForToday();
-    setState(getDailyState());
-    setInSession(false);
-    setSessionItems([]);
+  function handleCancelAddItem() {
+    setNewItemFront("");
+    setNewItemBack("");
+    if (!selectedCategoryName) {
+      setNewItemGroup("");
+    }
+    setView(selectedCategoryName ? "category" : "topic");
   }
 
-  function handleReset() {
-    resetForToday();
-    setState(getDailyState());
+  async function handleDeleteItem(itemId) {
+    // Find the item to get its name for the modal
+    const selectedTopic = topics.find((t) => t.id === selectedTopicId);
+    const allTopicItems = selectedTopic
+      ? selectedTopic.sets.flatMap((set) => set.items || [])
+      : [];
+    const item = allTopicItems.find((i) => i.id === itemId);
+
+    setDeleteModal({
+      show: true,
+      type: "item",
+      id: itemId,
+      name: item?.front,
+      onConfirm: async () => {
+        const updated = topics.map((topic) => {
+          if (topic.id === selectedTopicId) {
+            return {
+              ...topic,
+              sets: topic.sets.map((set) => ({
+                ...set,
+                items: (set.items || []).filter((item) => item.id !== itemId),
+              })),
+            };
+          }
+          return topic;
+        });
+
+        await chrome.storage.local.set({ "apertum.spaces": updated });
+        setTopics(updated);
+        setDeleteModal({ show: false, type: null, id: null, name: null });
+      },
+    });
   }
 
-  function handleOnboardingComplete() {
-    setShowOnboarding(false);
+  async function handleDeleteGroup(groupName) {
+    setDeleteModal({
+      show: true,
+      type: "category",
+      id: groupName,
+      name: groupName,
+      onConfirm: async () => {
+        const updated = topics.map((topic) => {
+          if (topic.id === selectedTopicId) {
+            return {
+              ...topic,
+              sets: topic.sets.map((set) => ({
+                ...set,
+                items: (set.items || []).filter(
+                  (item) => (item.group || "General") !== groupName
+                ),
+              })),
+            };
+          }
+          return topic;
+        });
+
+        await chrome.storage.local.set({ "apertum.spaces": updated });
+        setTopics(updated);
+        setDeleteModal({ show: false, type: null, id: null, name: null });
+        if (view === "category") {
+          setSelectedCategoryName(null);
+          setView("topic");
+        }
+      },
+    });
   }
 
-  function refreshSpaces() {
-    setSpaces(getAllSpaces());
-  }
+  const selectedTopic = topics.find((t) => t.id === selectedTopicId);
+  const allItems = selectedTopic
+    ? selectedTopic.sets.flatMap((set) => set.items || [])
+    : [];
 
-  function handleSelectSpace(spaceId) {
-    setSelectedSpaceId(spaceId);
-  }
+  // Group items by their group/category
+  const itemsByGroup = allItems.reduce((acc, item) => {
+    const group = item.group || "General";
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(item);
+    return acc;
+  }, {});
 
-  function handleSelectSet(setId) {
-    setSelectedSetId(setId);
-  }
+  const categoryItems = selectedCategoryName
+    ? itemsByGroup[selectedCategoryName] || []
+    : [];
 
-  function handleBackToSpaces() {
-    setSelectedSpaceId(null);
-    setSelectedSetId(null);
-    refreshSpaces();
-  }
-
-  function handleBackToSets() {
-    setSelectedSetId(null);
-    refreshSpaces();
-  }
-
-  // Show onboarding first if not completed
-  if (showOnboarding) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
-  }
-
-  // Show learning session if in progress
-  if (inSession) {
+  // Add category view
+  if (view === "addCategory") {
     return (
-      <LearningSession
-        items={sessionItems}
-        onComplete={handleSessionComplete}
-      />
-    );
-  }
+      <main className="apertum-simple">
+        <button className="back-button" onClick={() => setView("topic")}>
+          <IoChevronBack />
+        </button>
 
-  // Show set editor if a set is selected
-  if (selectedSet && selectedSpaceId) {
-    return (
-      <SetEditor
-        spaceId={selectedSpaceId}
-        set={selectedSet}
-        onBack={handleBackToSets}
-        onItemsChange={refreshSpaces}
-      />
-    );
-  }
+        <h1 className="page-title">Create new category</h1>
+        <p className="page-subtitle">
+          Organize your words into meaningful groups
+        </p>
 
-  // Show set list if a space is selected
-  if (selectedSpace) {
-    return (
-      <main className="apertum">
-        <SetList
-          space={selectedSpace}
-          onSelectSet={handleSelectSet}
-          onSetsChange={refreshSpaces}
-          onBack={handleBackToSpaces}
-        />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!newCategoryName.trim()) return;
+            setNewItemGroup(newCategoryName.trim());
+            setNewCategoryName("");
+            setView("addItem");
+          }}
+        >
+          <input
+            type="text"
+            className="topic-input"
+            placeholder="e.g., Greetings, Verbs, Numbers..."
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            autoFocus
+          />
+          <button type="submit" className="add-button-large">
+            Continue
+          </button>
+        </form>
       </main>
     );
   }
 
-  // Show space list with optional quick review modal
+  // Category detail view - Items in category
+  if (view === "category" && selectedTopic && selectedCategoryName) {
+    return (
+      <main className="apertum-simple">
+        <button
+          className="back-button"
+          onClick={() => {
+            setSelectedCategoryName(null);
+            setView("topic");
+          }}
+        >
+          <IoChevronBack />
+        </button>
+
+        <div className="set-header">
+          <div className="set-header-left">
+            <h1 className="page-title">{selectedCategoryName}</h1>
+            <p className="set-metadata">
+              {categoryItems.length}{" "}
+              {categoryItems.length === 1 ? "item" : "items"}
+            </p>
+          </div>
+          <button
+            className="text-link-danger"
+            onClick={() => handleDeleteGroup(selectedCategoryName)}
+          >
+            Delete category
+          </button>
+        </div>
+
+        <button
+          className="add-button-large"
+          onClick={() => {
+            setNewItemGroup(selectedCategoryName);
+            setView("addItem");
+          }}
+        >
+          <IoAdd /> Add words
+        </button>
+
+        {categoryItems.length === 0 ? (
+          <div className="empty-state">
+            <p className="empty-message">No words yet</p>
+            <p className="empty-hint">Add your first word to this category</p>
+          </div>
+        ) : (
+          <div className="items-list">
+            {categoryItems.map((item) => (
+              <div key={item.id} className="item-card">
+                <button
+                  className="delete-button-icon"
+                  onClick={() => handleDeleteItem(item.id)}
+                  title="Delete this note"
+                >
+                  <IoTrashOutline />
+                </button>
+                <div className="item-front">{item.front}</div>
+                <div className="item-back">{item.back}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    );
+  }
+
+  // Add item view
+  if (view === "addItem" && selectedTopic) {
+    return (
+      <main className="apertum-simple">
+        <button className="back-button" onClick={handleCancelAddItem}>
+          <IoChevronBack />
+        </button>
+
+        <h1 className="page-title">Add to {selectedTopic.name}</h1>
+        <p className="page-subtitle">
+          Create a note with a question and answer, or term and definition.
+        </p>
+
+        <form onSubmit={handleSaveNewItem}>
+          <input
+            type="text"
+            className="topic-input"
+            placeholder="Question or term..."
+            value={newItemFront}
+            onChange={(e) => setNewItemFront(e.target.value)}
+            autoFocus
+          />
+          <textarea
+            className="topic-input textarea"
+            placeholder="Answer or definition..."
+            value={newItemBack}
+            onChange={(e) => setNewItemBack(e.target.value)}
+            rows="4"
+          />
+          {!selectedCategoryName && (
+            <>
+              <input
+                type="text"
+                className="topic-input"
+                placeholder="Group (optional) - e.g., Chapter 1, Basics, Week 2..."
+                value={newItemGroup}
+                onChange={(e) => setNewItemGroup(e.target.value)}
+              />
+              <p className="group-hint">
+                Notes in the same group will be shown together
+              </p>
+            </>
+          )}
+          <button type="submit" className="add-button-large">
+            Save
+          </button>
+        </form>
+      </main>
+    );
+  }
+
+  // Add topic view
+  if (view === "addTopic") {
+    return (
+      <main className="apertum-simple">
+        <button className="back-button" onClick={handleCancelAddTopic}>
+          <IoChevronBack />
+        </button>
+
+        <h1 className="page-title">What are you learning?</h1>
+        <p className="page-subtitle">
+          This could be a language, a skill, or any topic you want to remember.
+        </p>
+
+        <form onSubmit={handleSaveNewTopic}>
+          <input
+            type="text"
+            className="topic-input"
+            placeholder="e.g., French, Cooking, Design..."
+            value={newTopicName}
+            onChange={(e) => setNewTopicName(e.target.value)}
+            autoFocus
+          />
+          <button type="submit" className="add-button-large">
+            Save
+          </button>
+        </form>
+      </main>
+    );
+  }
+
+  // Topic detail view - Category grid
+  if (view === "topic" && selectedTopic) {
+    const categories = Object.entries(itemsByGroup).map(([name, items]) => ({
+      name,
+      itemCount: items.length,
+    }));
+
+    return (
+      <main className="apertum-simple">
+        <div className="set-header">
+          <div className="set-header-left">
+            <button className="text-link" onClick={handleBackToHome}>
+              <IoChevronBack />
+            </button>
+            <h1 className="page-title">{selectedTopic.name}</h1>
+            <p className="set-metadata">
+              {allItems.length} {allItems.length === 1 ? "item" : "items"} ·{" "}
+              {categories.length}{" "}
+              {categories.length === 1 ? "category" : "categories"}
+            </p>
+          </div>
+          <button
+            className="text-link-danger"
+            onClick={(e) => handleDeleteTopic(e, selectedTopic.id)}
+          >
+            Delete set
+          </button>
+        </div>
+
+        <button
+          className="create-category-button"
+          onClick={() => setView("addCategory")}
+        >
+          <IoAdd /> Create new category
+        </button>
+
+        {categories.length === 0 ? (
+          <div className="empty-state">
+            <p className="empty-message">No categories yet</p>
+            <p className="empty-hint">
+              Create a category to organize your words
+            </p>
+          </div>
+        ) : (
+          <div className="categories-grid">
+            {categories.map((category, index) => (
+              <motion.div
+                key={category.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  setSelectedCategoryName(category.name);
+                  setView("category");
+                }}
+                className="category-card"
+              >
+                <div className="category-icon">
+                  <IoFolderOutline />
+                </div>
+                <div className="category-content">
+                  <h3 className="category-title">{category.name}</h3>
+                  <p className="category-count">
+                    {category.itemCount}{" "}
+                    {category.itemCount === 1 ? "card" : "cards"}
+                  </p>
+                </div>
+                <IoChevronForward className="category-arrow" />
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </main>
+    );
+  }
+
+  // Home view - Library
+  const totalItems = topics.reduce(
+    (sum, topic) =>
+      sum +
+      topic.sets.reduce((setSum, set) => setSum + (set.items?.length || 0), 0),
+    0
+  );
+  const activeSets = topics.length;
+
   return (
-    <main className="apertum">
-      <div className="apertum__logo" aria-hidden="true">
-        <span className="apertum__wordmark">apertum</span>
+    <main className="apertum-library">
+      <div className="library-header">
+        <div className="library-logo">
+          <img src="/icon-140.svg" alt="apertum" className="library-logo-img" />
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h1 className="library-title">Your Library</h1>
+          <p className="library-subtitle">
+            Manage your learning content and practice sets
+          </p>
+        </motion.div>
       </div>
 
-      <SpaceList
-        spaces={spaces}
-        onSelectSpace={handleSelectSpace}
-        onSpacesChange={refreshSpaces}
-      />
+      {/* Create new set card */}
+      <motion.button
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        onClick={handleAddTopicClick}
+        className="create-set-card"
+      >
+        <div className="create-set-icon">
+          <IoAdd />
+        </div>
+        <div className="create-set-content">
+          <p className="create-set-title">Create new set</p>
+          <p className="create-set-description">
+            Add flashcards, vocabulary, or study notes
+          </p>
+        </div>
+      </motion.button>
 
-      <button className="apertum__reset" onClick={handleReset}>
-        Reset daily (dev)
-      </button>
+      {/* Learning sets list */}
+      {topics.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="empty-library"
+        >
+          <p className="empty-message">Your library is empty</p>
+          <p className="empty-hint">Create your first set to start learning</p>
+        </motion.div>
+      ) : (
+        <div className="library-sets">
+          {topics.map((topic, index) => {
+            const itemCount = topic.sets.reduce(
+              (sum, set) => sum + (set.items?.length || 0),
+              0
+            );
+
+            return (
+              <motion.div
+                key={topic.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + index * 0.05 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleOpenTopic(topic.id)}
+                className="library-set-card"
+              >
+                <div className="set-card-icon">
+                  <IoBookOutline />
+                </div>
+                <div className="set-card-content">
+                  <h3 className="set-card-title">{topic.name}</h3>
+                  <p className="set-card-description">
+                    {itemCount === 0
+                      ? "No items yet"
+                      : itemCount === 1
+                      ? "1 item"
+                      : `${itemCount} items`}
+                  </p>
+                  <div className="set-card-meta">
+                    <span>{itemCount} items</span>
+                  </div>
+                </div>
+                <div className="set-card-actions">
+                  <button
+                    className="set-delete-button"
+                    onClick={(e) => handleDeleteTopic(e, topic.id)}
+                    title="Delete this set"
+                  >
+                    <IoClose />
+                  </button>
+                  <IoChevronForward className="set-card-arrow" />
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Stats footer */}
+      {topics.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="library-stats"
+        >
+          <div className="stat-item">
+            <p className="stat-value">{totalItems}</p>
+            <p className="stat-label">Total items</p>
+          </div>
+          <div className="stat-item">
+            <p className="stat-value">{activeSets}</p>
+            <p className="stat-label">Active sets</p>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteModal.show && (
+        <div
+          className="modal-overlay"
+          onClick={() =>
+            setDeleteModal({ show: false, type: null, id: null, name: null })
+          }
+        >
+          <motion.div
+            className="modal-content"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="modal-title">
+              {deleteModal.type === "topic" && "Delete set?"}
+              {deleteModal.type === "category" && "Delete category?"}
+              {deleteModal.type === "item" && "Delete item?"}
+            </h2>
+            <p className="modal-message">
+              {deleteModal.type === "topic" &&
+                `Are you sure you want to delete "${deleteModal.name}"? This will remove all categories and items inside it.`}
+              {deleteModal.type === "category" &&
+                `Are you sure you want to delete all items in "${deleteModal.name}"?`}
+              {deleteModal.type === "item" &&
+                `Are you sure you want to delete "${deleteModal.name}"?`}
+            </p>
+            <div className="modal-actions">
+              <button
+                className="modal-button modal-button-cancel"
+                onClick={() =>
+                  setDeleteModal({
+                    show: false,
+                    type: null,
+                    id: null,
+                    name: null,
+                  })
+                }
+              >
+                Cancel
+              </button>
+              <button
+                className="modal-button modal-button-danger"
+                onClick={deleteModal.onConfirm}
+              >
+                Delete
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </main>
   );
 }

@@ -1,0 +1,742 @@
+@use "./styles" as *;
+
+// Library view styles
+.apertum-library {
+  padding: 32px 24px;
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: $font-sans;
+}
+
+.library-header {
+  margin-bottom: 32px;
+}
+
+.library-logo {
+  width: 120px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.library-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.library-title {
+  font-size: $text-xxl;
+  font-weight: $weight-semibold;
+  margin: 0 0 8px 0;
+  color: $neutral-900;
+}
+
+.library-subtitle {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0;
+  line-height: $line-normal;
+}
+
+.create-set-card {
+  width: 100%;
+  padding: 24px;
+  background: $neutral-00;
+  border: 2px dashed $neutral-300;
+  border-radius: 16px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+
+  &:hover {
+    background: $rose-100;
+    border-color: $rose-300;
+  }
+}
+
+.create-set-icon {
+  width: 48px;
+  height: 48px;
+  background: $rose-100;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: $rose-600;
+  transition: background 0.2s;
+
+  .create-set-card:hover & {
+    background: $rose-200;
+  }
+}
+
+.create-set-content {
+  flex: 1;
+}
+
+.create-set-title {
+  font-size: $text-md;
+  font-weight: $weight-medium;
+  color: $neutral-900;
+  margin: 0 0 4px 0;
+}
+
+.create-set-description {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0;
+}
+
+.library-sets {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.library-set-card {
+  width: 100%;
+  padding: 24px;
+  background: $neutral-00;
+  border: 1px solid $neutral-200;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: $rose-300;
+  }
+}
+
+.set-card-icon {
+  width: 48px;
+  height: 48px;
+  background: $rose-100;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: $rose-600;
+  flex-shrink: 0;
+}
+
+.set-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.set-card-title {
+  font-size: $text-md;
+  font-weight: $weight-medium;
+  color: $neutral-900;
+  margin: 0 0 4px 0;
+}
+
+.set-card-description {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0 0 8px 0;
+}
+
+.set-card-meta {
+  font-size: $text-xs;
+  color: $neutral-500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.set-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.set-delete-button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: $neutral-400;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.set-card-arrow {
+  font-size: 20px;
+  color: $neutral-400;
+  transition: all 0.2s;
+}
+
+.empty-library {
+  text-align: center;
+  padding: 64px 24px;
+}
+
+.empty-message {
+  font-size: $text-lg;
+  color: $neutral-700;
+  margin: 0 0 8px 0;
+}
+
+.empty-hint {
+  font-size: $text-sm;
+  color: $neutral-500;
+  margin: 0;
+}
+
+.library-stats {
+  padding-top: 32px;
+  border-top: 1px solid $neutral-200;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: $text-xxl;
+  font-weight: $weight-medium;
+  color: $neutral-900;
+  margin: 0 0 4px 0;
+}
+
+.stat-label {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0;
+}
+
+// Other views styles
+.apertum-simple {
+  padding: 32px 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: $font-sans;
+}
+
+.set-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 24px;
+}
+
+.set-header-left {
+  flex: 1;
+}
+
+.text-link {
+  background: none;
+  border: none;
+  color: $blue-600;
+  font-size: $text-lg;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: $blue-500;
+  }
+}
+
+.text-link-danger {
+  background: none;
+  border: none;
+  color: $rose-600;
+  font-size: $text-sm;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: $rose-500;
+  }
+}
+
+.set-metadata {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 8px 0 0 0;
+}
+
+.create-category-button {
+  width: 100%;
+  padding: 16px;
+  background: $blue-100;
+  border: 1px solid $blue-200;
+  border-radius: 12px;
+  color: $blue-700;
+  font-size: $text-md;
+  font-weight: $weight-medium;
+  cursor: pointer;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $blue-200;
+    border-color: $blue-300;
+  }
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.category-card {
+  padding: 20px;
+  background: $neutral-00;
+  border: 1px solid $neutral-200;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: $blue-300;
+  }
+}
+
+.category-icon {
+  width: 40px;
+  height: 40px;
+  background: $blue-100;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: $blue-600;
+  flex-shrink: 0;
+}
+
+.category-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-title {
+  font-size: $text-md;
+  font-weight: $weight-medium;
+  color: $neutral-900;
+  margin: 0 0 4px 0;
+}
+
+.category-count {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0;
+}
+
+.category-arrow {
+  font-size: 18px;
+  color: $neutral-400;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+// Delete confirmation modal
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(42, 35, 38, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: $neutral-00;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 420px;
+  width: calc(100% - 48px);
+  box-shadow: 0 24px 48px rgba(42, 35, 38, 0.2);
+}
+
+.modal-title {
+  font-size: $text-xl;
+  font-weight: $weight-semibold;
+  color: $neutral-900;
+  margin: 0 0 12px 0;
+}
+
+.modal-message {
+  font-size: $text-md;
+  color: $neutral-700;
+  line-height: $line-normal;
+  margin: 0 0 24px 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: $text-md;
+  font-weight: $weight-medium;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.modal-button-cancel {
+  background: $neutral-100;
+  color: $neutral-700;
+}
+
+.modal-button-danger {
+  background: $rose-500;
+  color: $neutral-00;
+}
+
+.apertum-logo {
+  width: 180px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.apertum-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.apertum-wordmark {
+  color: $neutral-00;
+  font-size: $text-xl;
+  font-weight: $weight-semibold;
+  letter-spacing: $tracking-wide;
+}
+
+.page-title {
+  font-size: $text-xxl;
+  font-weight: $weight-semibold;
+  margin: 0 0 8px 0;
+  color: $neutral-900;
+}
+
+.page-subtitle {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0 0 32px 0;
+  line-height: $line-normal;
+}
+
+.topic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.add-button-large {
+  width: 100%;
+  padding: 16px;
+  font-size: $text-lg;
+  font-weight: $weight-medium;
+  background: $rose-500;
+  color: $neutral-00;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 32px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover {
+    background: $rose-600;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.topic-input {
+  width: 100%;
+  padding: 16px;
+  font-size: $text-md;
+  font-family: $font-sans;
+  border: 2px solid $neutral-200;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $rose-500;
+  }
+
+  &::placeholder {
+    color: $neutral-400;
+  }
+
+  &.textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+.group-hint {
+  font-size: $text-xs;
+  color: $neutral-500;
+  margin: -8px 0 16px 0;
+  font-style: italic;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.empty-message {
+  font-size: $text-lg;
+  color: $neutral-700;
+  margin: 0 0 12px 0;
+}
+
+.empty-hint {
+  font-size: $text-sm;
+  color: $neutral-500;
+  margin: 0;
+}
+
+.topics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topic-card {
+  padding: 20px;
+  background: $rose-100;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  position: relative;
+
+  &:hover {
+    background: $rose-200;
+    border-color: $rose-500;
+  }
+}
+
+.topic-name {
+  font-size: $text-lg;
+  font-weight: $weight-medium;
+  margin: 0 0 8px 0;
+  color: $neutral-900;
+}
+
+.topic-meta {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 0;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: $blue-600;
+  font-size: $text-lg;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: $blue-500;
+  }
+}
+
+.delete-button-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: $rose-500;
+  color: $neutral-00;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  font-weight: $weight-semibold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  padding: 0;
+
+  svg {
+    display: block;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.delete-button-small {
+  background: none;
+  border: 1px solid $rose-400;
+  color: $rose-600;
+  font-size: $text-xs;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    background: $rose-500;
+    color: $neutral-00;
+    border-color: $rose-500;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.item-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.group-name {
+  font-size: $text-md;
+  font-weight: $weight-semibold;
+  color: $blue-600;
+  margin: 0 0 4px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid $blue-200;
+}
+
+.item-card {
+  padding: 16px;
+  background: $neutral-00;
+  border: 1px solid $neutral-200;
+  border-radius: 8px;
+  position: relative;
+
+  .delete-button-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    color: $brown-800;
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s;
+    padding: 0;
+
+    svg {
+      display: block;
+    }
+
+    &:hover {
+      background: $brown-100;
+      color: $brown-900;
+    }
+  }
+
+  &:hover .delete-button-icon {
+    opacity: 1;
+  }
+}
+
+.item-front {
+  font-weight: $weight-medium;
+  color: $neutral-900;
+  margin-bottom: 8px;
+}
+
+.item-back {
+  color: $neutral-600;
+  font-size: $text-sm;
+}

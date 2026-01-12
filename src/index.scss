@@ -45,10 +45,6 @@ button {
   cursor: pointer;
   transition: all 0.2s ease;
 
-  &:hover {
-    background-color: var(--action-primary-hover);
-  }
-
   &:active {
     background-color: var(--action-primary-pressed);
   }
