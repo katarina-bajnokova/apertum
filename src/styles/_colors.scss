@@ -1,0 +1,133 @@
+/* =========================
+   PRIMITIVE COLORS
+   ========================= */
+
+// Core Background
+$white-100: #f6f4f1; // Pantone 2026 warm white
+
+/* =========================
+   ROSE SCALE (PRIMARY)
+   ========================= */
+$rose-100: #f7e6eb; // very soft background tint
+$rose-200: #f1d3da; // hover / subtle fill
+$rose-300: #ebc1cb;
+$rose-400: #e1a9b6;
+$rose-500: #e7b6c2; // PRIMARY - Pantone 2026 pink
+$rose-600: #d997a6; // pressed / emphasis
+$rose-700: #c97f90; // strong accent
+$rose-800: #b4687b;
+$rose-900: #9f5166;
+
+/* =========================
+   BLUE SCALE (SECONDARY)
+   ========================= */
+$blue-100: #eef4f8; // very soft background tint
+$blue-200: #dce8f1;
+$blue-300: #c7d8e6;
+$blue-400: #b6ccde;
+$blue-500: #a9c3d8; // SECONDARY - Pantone blue
+$blue-600: #8faec8; // pressed / emphasis
+$blue-700: #7897b2;
+$blue-800: #5f7e9c;
+$blue-900: #476586;
+
+/* =========================
+   NEUTRALS (GRAYS)
+   ========================= */
+$neutral-00: #ffffff; // pure white
+$neutral-50: #fbfaf8;
+$neutral-100: #f1eeeb;
+$neutral-200: #e5e1dd;
+$neutral-300: #d4cec9;
+$neutral-400: #b8b1ab;
+$neutral-500: #9c948e; // mid gray
+$neutral-600: #7e7671;
+$neutral-700: #5a4a4e; // primary text
+$neutral-800: #3f3538;
+$neutral-900: #2a2326;
+
+/* =========================
+   BROWNS (WARM ACCENTS)
+   ========================= */
+$brown-100: #f5ede7;
+$brown-200: #ebdccf;
+$brown-300: #dcc8b7;
+$brown-400: #cdb4a0;
+$brown-500: #bea088; // mid brown
+$brown-600: #a88b72;
+$brown-700: #8f735d;
+$brown-800: #755c49;
+$brown-900: #5c4536;
+
+/* =========================
+   EFFECTS & OVERLAYS
+   ========================= */
+$overlay-soft: rgba(90, 74, 78, 0.06);
+$overlay-medium: rgba(90, 74, 78, 0.12);
+$overlay-strong: rgba(90, 74, 78, 0.18);
+
+$shadow-soft: 0 8px 24px rgba(90, 74, 78, 0.08);
+$shadow-hover: 0 12px 32px rgba(90, 74, 78, 0.12);
+$shadow-modal: 0 24px 48px rgba(90, 74, 78, 0.16);
+
+/* =========================
+   CSS CUSTOM PROPERTIES
+   ========================= */
+:root {
+  // Core
+  --white-100: #{$white-100};
+
+  // Rose
+  --rose-100: #{$rose-100};
+  --rose-200: #{$rose-200};
+  --rose-300: #{$rose-300};
+  --rose-400: #{$rose-400};
+  --rose-500: #{$rose-500};
+  --rose-600: #{$rose-600};
+  --rose-700: #{$rose-700};
+  --rose-800: #{$rose-800};
+  --rose-900: #{$rose-900};
+
+  // Blue
+  --blue-100: #{$blue-100};
+  --blue-200: #{$blue-200};
+  --blue-300: #{$blue-300};
+  --blue-400: #{$blue-400};
+  --blue-500: #{$blue-500};
+  --blue-600: #{$blue-600};
+  --blue-700: #{$blue-700};
+  --blue-800: #{$blue-800};
+  --blue-900: #{$blue-900};
+
+  // Neutrals
+  --neutral-00: #{$neutral-00};
+  --neutral-50: #{$neutral-50};
+  --neutral-100: #{$neutral-100};
+  --neutral-200: #{$neutral-200};
+  --neutral-300: #{$neutral-300};
+  --neutral-400: #{$neutral-400};
+  --neutral-500: #{$neutral-500};
+  --neutral-600: #{$neutral-600};
+  --neutral-700: #{$neutral-700};
+  --neutral-800: #{$neutral-800};
+  --neutral-900: #{$neutral-900};
+
+  // Browns
+  --brown-100: #{$brown-100};
+  --brown-200: #{$brown-200};
+  --brown-300: #{$brown-300};
+  --brown-400: #{$brown-400};
+  --brown-500: #{$brown-500};
+  --brown-600: #{$brown-600};
+  --brown-700: #{$brown-700};
+  --brown-800: #{$brown-800};
+  --brown-900: #{$brown-900};
+
+  // Effects
+  --overlay-soft: #{$overlay-soft};
+  --overlay-medium: #{$overlay-medium};
+  --overlay-strong: #{$overlay-strong};
+  --shadow-soft: #{$shadow-soft};
+  --shadow-hover: #{$shadow-hover};
+  --shadow-modal: #{$shadow-modal};
+}

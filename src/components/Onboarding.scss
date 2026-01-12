@@ -1,0 +1,83 @@
+@use "../styles" as *;
+
+.onboarding {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.onboarding__container {
+  max-width: 560px;
+  text-align: center;
+  display: grid;
+  gap: 24px;
+}
+
+.onboarding__headline {
+  @include text-headline;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.onboarding__text {
+  @include text-emphasis;
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: var(--line-loose);
+}
+
+.onboarding__subtext {
+  @include text-secondary;
+  margin: 0;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.onboarding__btn {
+  @include text-button;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  justify-self: center;
+
+  &--primary {
+    background: var(--action-primary);
+    color: var(--text-inverse);
+
+    &:hover {
+      background: var(--action-primary-hover);
+    }
+
+    &:active {
+      background: var(--action-primary-pressed);
+    }
+  }
+}
+
+.onboarding__progress {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.onboarding__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neutral-300);
+  transition: all 0.3s ease;
+
+  &.active {
+    background: var(--action-primary);
+    width: 24px;
+    border-radius: 4px;
+  }
+}

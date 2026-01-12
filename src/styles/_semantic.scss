@@ -1,0 +1,86 @@
+@use "colors" as *;
+
+/* =========================
+   SEMANTIC COLOR SYSTEM
+   ========================= */
+
+// Backgrounds
+$bg-primary: $white-100; // Main canvas
+$bg-surface: $neutral-00; // Cards, modals
+$bg-surface-hover: $neutral-50; // Hover states
+$bg-subtle: $neutral-100; // Sections, containers
+
+// Typography
+$text-primary: $brown-800; // Main body text
+$text-secondary: $neutral-600; // Supporting text
+$text-tertiary: $neutral-500; // Captions, labels
+$text-disabled: $neutral-400; // Disabled states
+$text-inverse: $neutral-00; // Text on dark/colored backgrounds
+
+// Primary Actions (Pantone Pink)
+$action-primary: $rose-500; // Buttons, links, CTAs
+$action-primary-hover: $rose-600; // Hover state
+$action-primary-pressed: $rose-700; // Active/pressed state
+$action-primary-subtle: $rose-100; // Background tints
+$action-primary-border: $rose-400; // Borders
+
+// Secondary Actions (Pantone Blue - exceptional situations)
+$action-secondary: $blue-500; // Alternative actions
+$action-secondary-hover: $blue-600; // Hover state
+$action-secondary-pressed: $blue-700; // Active/pressed state
+$action-secondary-subtle: $blue-100; // Background tints
+$action-secondary-border: $blue-400; // Borders
+
+// Borders & Dividers
+$border-light: $neutral-200; // Subtle dividers
+$border-medium: $neutral-300; // Standard borders
+$border-strong: $neutral-400; // Emphasized borders
+
+// Interactive States
+$state-hover: $overlay-soft; // Hover overlay
+$state-pressed: $overlay-medium; // Pressed overlay
+$state-focus: $rose-500; // Focus rings
+$state-disabled: $neutral-200; // Disabled backgrounds
+
+/* =========================
+   SEMANTIC CSS CUSTOM PROPERTIES
+   ========================= */
+:root {
+  // Backgrounds
+  --bg-primary: #{$bg-primary};
+  --bg-surface: #{$bg-surface};
+  --bg-surface-hover: #{$bg-surface-hover};
+  --bg-subtle: #{$bg-subtle};
+
+  // Typography
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --text-tertiary: #{$text-tertiary};
+  --text-disabled: #{$text-disabled};
+  --text-inverse: #{$text-inverse};
+
+  // Primary Actions
+  --action-primary: #{$action-primary};
+  --action-primary-hover: #{$action-primary-hover};
+  --action-primary-pressed: #{$action-primary-pressed};
+  --action-primary-subtle: #{$action-primary-subtle};
+  --action-primary-border: #{$action-primary-border};
+
+  // Secondary Actions
+  --action-secondary: #{$action-secondary};
+  --action-secondary-hover: #{$action-secondary-hover};
+  --action-secondary-pressed: #{$action-secondary-pressed};
+  --action-secondary-subtle: #{$action-secondary-subtle};
+  --action-secondary-border: #{$action-secondary-border};
+
+  // Borders
+  --border-light: #{$border-light};
+  --border-medium: #{$border-medium};
+  --border-strong: #{$border-strong};
+
+  // States
+  --state-hover: #{$state-hover};
+  --state-pressed: #{$state-pressed};
+  --state-focus: #{$state-focus};
+  --state-disabled: #{$state-disabled};
+}

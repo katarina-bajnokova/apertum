@@ -1,0 +1,125 @@
+:root {
+  --white-100: #f6f4f1;
+  --rose-500: #e7b6c2;
+  --blue-500: #a9c3d8;
+  --neutral-900: #2a2326;
+  --neutral-700: #5a4a4e;
+  --neutral-00: #ffffff;
+}
+
+.apertum-overlay-modal {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 999999;
+  animation: slideIn 0.3s ease;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.apertum-modal-card {
+  width: 380px;
+  background: #f6f4f1;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.apertum-set-label {
+  padding: 12px 24px;
+  background: #e7b6c2;
+  color: #4a3831;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.apertum-prompt {
+  padding: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #4a3831;
+  text-align: center;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eeebe8;
+}
+
+.apertum-choices {
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.apertum-choice {
+  padding: 14px 18px;
+  border: 2px solid #d4cfc9;
+  border-radius: 10px;
+  background: white;
+  color: #4a3831;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.apertum-choice:hover {
+  border-color: #e7b6c2;
+  background: #fdf8fa;
+  transform: translateY(-1px);
+}
+
+.apertum-result {
+  display: grid;
+  gap: 12px;
+}
+
+.apertum-feedback {
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+}
+
+.apertum-feedback.incorrect {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.apertum-answer-box {
+  padding: 14px;
+  background: #fdf8fa;
+  border-radius: 10px;
+  border: 2px solid #e7b6c2;
+  text-align: center;
+}
+
+.apertum-answer-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8c7b74;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.apertum-answer-text {
+  font-size: 17px;
+  color: #4a3831;
+  font-weight: 600;
+}

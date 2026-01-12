@@ -1,0 +1,200 @@
+@use "../styles" as *;
+
+.quick-review {
+  max-width: 520px;
+  width: 100%;
+  background: var(--bg-primary);
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.quick-review__card {
+  background: var(--bg-surface);
+  padding: 32px;
+  display: grid;
+  gap: 24px;
+  text-align: center;
+}
+
+.quick-review__set-label {
+  @include text-caption;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: var(--weight-medium);
+}
+
+.quick-review__prompt {
+  @include text-headline;
+  color: var(--text-primary);
+  padding: 24px;
+  background: var(--bg-subtle);
+  border-radius: 12px;
+  min-height: 80px;
+  display: grid;
+  place-items: center;
+}
+
+.quick-review__choices {
+  display: grid;
+  gap: 12px;
+}
+
+.quick-review__choice {
+  @include text-body;
+  padding: 16px 20px;
+  border: 2px solid var(--border-medium);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  text-align: center;
+
+  &:hover {
+    border-color: var(--action-primary);
+    background: var(--action-primary-subtle);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.quick-review__form {
+  display: grid;
+  gap: 16px;
+}
+
+.quick-review__input {
+  @include text-body;
+  padding: 14px 18px;
+  border: 2px solid var(--border-medium);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  text-align: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--action-primary);
+  }
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+}
+
+.quick-review__btn {
+  @include text-button;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: var(--weight-medium);
+
+  &--primary {
+    background: var(--action-primary);
+    color: var(--text-inverse);
+
+    &:hover {
+      background: var(--action-primary-hover);
+    }
+  }
+
+  &--secondary {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border: 2px solid var(--border-medium);
+
+    &:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-strong);
+    }
+  }
+}
+
+.quick-review__result {
+  display: grid;
+  gap: 16px;
+}
+
+.quick-review__feedback {
+  @include text-title;
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: var(--weight-semibold);
+
+  &.correct {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.incorrect {
+    background: #fce4ec;
+    color: #c2185b;
+  }
+}
+
+.quick-review__answer {
+  @include text-body;
+  padding: 16px;
+  background: var(--action-primary-subtle);
+  border-radius: 12px;
+  border: 2px solid var(--action-primary-border);
+  display: grid;
+  gap: 8px;
+}
+
+.quick-review__answer-label {
+  @include text-caption;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--weight-medium);
+}
+
+.quick-review__answer-text {
+  font-size: 18px;
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+
+.quick-review__manage {
+  @include text-caption;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  background: var(--bg-subtle);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--text-secondary);
+    background: var(--neutral-200);
+  }
+}
+
+.quick-review__empty {
+  text-align: center;
+  padding: 32px;
+}
+
+.quick-review__empty-title {
+  @include text-headline;
+  margin: 0 0 12px;
+  color: var(--text-primary);
+}
+
+.quick-review__empty-text {
+  @include text-body;
+  margin: 0 0 24px;
+  color: var(--text-secondary);
+}

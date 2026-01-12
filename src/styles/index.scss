@@ -1,0 +1,11 @@
+/* =========================
+   MAIN STYLES ENTRY
+   Import Order: Primitives → Semantics → Base
+   ========================= */
+
+// 1. Primitive tokens (foundation)
+@forward "colors";
+@forward "typography";
+
+// 2. Semantic tokens (depends on primitives)
+@forward "semantic";

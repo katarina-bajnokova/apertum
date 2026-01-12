@@ -1,0 +1,136 @@
+/* =========================
+   TYPOGRAPHY SYSTEM
+   ========================= */
+
+// Font Families
+$font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+$font-serif: "Fraunces", Georgia, serif;
+
+/* =========================
+   TYPE SCALE
+   ========================= */
+$text-xs: 12px; // meta, captions
+$text-sm: 14px; // secondary text, helper text
+$text-md: 16px; // body (default)
+$text-lg: 18px; // emphasis paragraphs
+$text-xl: 22px; // section titles
+$text-xxl: 28px; // onboarding headlines
+
+/* =========================
+   FONT WEIGHTS
+   ========================= */
+$weight-regular: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+
+/* =========================
+   LINE HEIGHTS
+   ========================= */
+$line-tight: 1.2; // headlines only
+$line-normal: 1.5; // body text
+$line-loose: 1.65; // onboarding / explanatory text
+
+/* =========================
+   LETTER SPACING
+   ========================= */
+$tracking-tight: -0.01em;
+$tracking-normal: 0;
+$tracking-wide: 0.02em;
+
+/* =========================
+   CSS CUSTOM PROPERTIES
+   ========================= */
+:root {
+  // Font Families
+  --font-sans: #{$font-sans};
+  --font-serif: #{$font-serif};
+
+  // Type Scale
+  --text-xs: #{$text-xs};
+  --text-sm: #{$text-sm};
+  --text-md: #{$text-md};
+  --text-lg: #{$text-lg};
+  --text-xl: #{$text-xl};
+  --text-xxl: #{$text-xxl};
+
+  // Font Weights
+  --weight-regular: #{$weight-regular};
+  --weight-medium: #{$weight-medium};
+  --weight-semibold: #{$weight-semibold};
+
+  // Line Heights
+  --line-tight: #{$line-tight};
+  --line-normal: #{$line-normal};
+  --line-loose: #{$line-loose};
+
+  // Letter Spacing
+  --tracking-tight: #{$tracking-tight};
+  --tracking-normal: #{$tracking-normal};
+  --tracking-wide: #{$tracking-wide};
+}
+
+/* =========================
+   TYPOGRAPHY MIXINS
+   ========================= */
+
+// Body Text (Default)
+@mixin text-body {
+  font-family: $font-sans;
+  font-size: $text-md;
+  line-height: $line-normal;
+  font-weight: $weight-regular;
+  letter-spacing: $tracking-normal;
+}
+
+// Headline (Onboarding)
+@mixin text-headline {
+  font-family: $font-serif;
+  font-size: $text-xxl;
+  line-height: $line-tight;
+  font-weight: $weight-medium;
+  letter-spacing: $tracking-tight;
+}
+
+// Section Title
+@mixin text-title {
+  font-family: $font-serif;
+  font-size: $text-xl;
+  line-height: $line-tight;
+  font-weight: $weight-medium;
+  letter-spacing: $tracking-tight;
+}
+
+// Emphasis Paragraph
+@mixin text-emphasis {
+  font-family: $font-sans;
+  font-size: $text-lg;
+  line-height: $line-loose;
+  font-weight: $weight-regular;
+  letter-spacing: $tracking-normal;
+}
+
+// Button Text
+@mixin text-button {
+  font-family: $font-sans;
+  font-size: $text-sm;
+  font-weight: $weight-medium;
+  letter-spacing: $tracking-wide;
+}
+
+// Microcopy / Helper Text
+@mixin text-caption {
+  font-family: $font-sans;
+  font-size: $text-xs;
+  line-height: $line-normal;
+  font-weight: $weight-regular;
+  letter-spacing: $tracking-normal;
+}
+
+// Secondary Text
+@mixin text-secondary {
+  font-family: $font-sans;
+  font-size: $text-sm;
+  line-height: $line-normal;
+  font-weight: $weight-regular;
+  letter-spacing: $tracking-normal;
+}

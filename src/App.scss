@@ -1,0 +1,95 @@
+@use "./styles" as *;
+
+.apertum {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+  background: var(--white-100);
+  color: var(--neutral-700, #5a4a4e);
+  text-align: center;
+}
+
+.apertum__logo {
+  width: 280px;
+  height: 220px;
+  background: var(--rose-500);
+  border-radius: 55% 45% 60% 40% / 55% 60% 40% 45%;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 28px;
+  filter: blur(0.6px);
+}
+
+.apertum__wordmark {
+  color: var(--neutral-00);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.apertum__panel {
+  max-width: 520px;
+  display: grid;
+  gap: 14px;
+}
+
+.apertum__status {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.apertum__meta {
+  margin: 0;
+  font-size: 12px;
+  color: var(--neutral-500, #9c948e);
+}
+
+.apertum__reset {
+  @include text-caption;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  border: 0;
+  background: var(--bg-surface);
+  color: var(--text-tertiary);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border-light);
+
+  &:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-secondary);
+  }
+}
+
+.apertum__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.apertum__btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.apertum__btn--primary {
+  background: var(--rose-500);
+  color: var(--neutral-00);
+}
+
+.apertum__btn--primary:hover {
+  background: var(--rose-600);
+}

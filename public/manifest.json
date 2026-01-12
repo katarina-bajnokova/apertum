@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Apertum",
+  "description": "A gentle daily interruption for learning.",
+  "version": "0.1.0",
+  "permissions": ["storage", "sidePanel", "alarms", "tabs", "notifications", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open Apertum"
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "icons": {
+    "16": "icon-16.png"
+  }
+}
