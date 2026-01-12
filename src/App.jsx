@@ -7,13 +7,14 @@ import {
   IoBookOutline,
   IoChevronForward,
   IoFolderOutline,
+  IoSettingsOutline,
 } from "react-icons/io5";
 import { motion } from "framer-motion";
 import "./AppSimple.scss";
 
 export default function App() {
   const [topics, setTopics] = useState([]);
-  const [view, setView] = useState("home"); // home, topic, category, addTopic, addCategory, addItem
+  const [view, setView] = useState("home"); // home, topic, category, addTopic, addCategory, addItem, settings
   const [selectedTopicId, setSelectedTopicId] = useState(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState(null);
   const [newTopicName, setNewTopicName] = useState("");
@@ -21,6 +22,9 @@ export default function App() {
   const [newItemFront, setNewItemFront] = useState("");
   const [newItemBack, setNewItemBack] = useState("");
   const [newItemGroup, setNewItemGroup] = useState("");
+  const [reminderInterval, setReminderInterval] = useState(10); // Default 10 minutes
+  const [reminderEnabled, setReminderEnabled] = useState(true); // Default enabled
+  const [practiceSelection, setPracticeSelection] = useState({ mode: "all" }); // { mode: "all" | "specific", setIds: [], groupNames: [] }
   const [deleteModal, setDeleteModal] = useState({
     show: false,
     type: null,
@@ -30,12 +34,51 @@ export default function App() {
 
   useEffect(() => {
     loadTopics();
+    loadSettings();
   }, []);
 
   async function loadTopics() {
     const result = await chrome.storage.local.get("apertum.spaces");
     const spaces = result["apertum.spaces"] || [];
     setTopics(spaces);
+  }
+
+  async function loadSettings() {
+    const result = await chrome.storage.local.get([
+      "apertum.reminderInterval",
+      "apertum.reminderEnabled",
+      "apertum.practiceSelection",
+    ]);
+    const interval = result["apertum.reminderInterval"] || 10;
+    const enabled = result["apertum.reminderEnabled"] !== false; // Default true
+    const selection = result["apertum.practiceSelection"] || { mode: "all" };
+    setReminderInterval(interval);
+    setReminderEnabled(enabled);
+    setPracticeSelection(selection);
+  }
+
+  async function handleIntervalChange(newInterval) {
+    setReminderInterval(newInterval);
+    await chrome.storage.local.set({ "apertum.reminderInterval": newInterval });
+    // Notify background script to update the alarm
+    chrome.runtime.sendMessage({
+      type: "UPDATE_INTERVAL",
+      interval: newInterval,
+    });
+  }
+
+  async function handleToggleReminder(enabled) {
+    setReminderEnabled(enabled);
+    await chrome.storage.local.set({ "apertum.reminderEnabled": enabled });
+    // Notify background script
+    chrome.runtime.sendMessage({ type: "TOGGLE_REMINDER", enabled: enabled });
+  }
+
+  async function handlePracticeSelectionChange(newSelection) {
+    setPracticeSelection(newSelection);
+    await chrome.storage.local.set({
+      "apertum.practiceSelection": newSelection,
+    });
   }
 
   function handleAddTopicClick() {
@@ -423,6 +466,190 @@ export default function App() {
     );
   }
 
+  // Settings view
+  if (view === "settings") {
+    const intervalOptions = [
+      { value: 5, label: "5 minutes" },
+      { value: 10, label: "10 minutes" },
+      { value: 15, label: "15 minutes" },
+      { value: 30, label: "30 minutes" },
+      { value: 60, label: "1 hour" },
+      { value: 180, label: "3 hours" },
+      { value: 720, label: "12 hours" },
+      { value: 1440, label: "24 hours" },
+    ];
+
+    return (
+      <main className="apertum-simple">
+        <button className="back-button" onClick={() => setView("home")}>
+          <IoChevronBack />
+        </button>
+
+        <h1 className="page-title">Settings</h1>
+        <p className="page-subtitle">
+          Customize how often you want to be reminded to practice
+        </p>
+
+        <div className="settings-section">
+          <div className="settings-toggle-row">
+            <div>
+              <h3 className="settings-label">Enable Reminders</h3>
+              <p className="settings-description">
+                Show practice questions at regular intervals
+              </p>
+            </div>
+            <button
+              className={`toggle-switch ${reminderEnabled ? "active" : ""}`}
+              onClick={() => handleToggleReminder(!reminderEnabled)}
+            >
+              <div className="toggle-slider" />
+            </button>
+          </div>
+        </div>
+
+        {reminderEnabled && (
+          <div className="settings-section">
+            <h3 className="settings-label">Reminder Interval</h3>
+            <div className="interval-options">
+              {intervalOptions.map((option) => (
+                <button
+                  key={option.value}
+                  className={`interval-option ${
+                    reminderInterval === option.value ? "active" : ""
+                  }`}
+                  onClick={() => handleIntervalChange(option.value)}
+                >
+                  <div className="interval-radio">
+                    {reminderInterval === option.value && (
+                      <div className="interval-radio-dot" />
+                    )}
+                  </div>
+                  <span>{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {reminderEnabled && (
+          <div className="settings-section">
+            <h3 className="settings-label">Practice From</h3>
+            <p className="settings-description">
+              Choose which sets or categories to practice
+            </p>
+
+            <div className="practice-selection">
+              <button
+                className={`practice-option ${
+                  practiceSelection.mode === "all" ? "active" : ""
+                }`}
+                onClick={() => handlePracticeSelectionChange({ mode: "all" })}
+              >
+                <div className="practice-checkbox">
+                  {practiceSelection.mode === "all" && (
+                    <div className="practice-check">✓</div>
+                  )}
+                </div>
+                <span>All Sets</span>
+              </button>
+
+              {topics.length > 0 && (
+                <>
+                  <div className="practice-divider">or choose specific:</div>
+                  {topics.map((topic) => {
+                    const allGroups = [
+                      ...new Set(
+                        topic.sets.flatMap((set) =>
+                          set.items.map((item) => item.group)
+                        )
+                      ),
+                    ];
+
+                    return (
+                      <div key={topic.id} className="practice-topic-group">
+                        <div className="practice-topic-name">{topic.name}</div>
+                        {allGroups.map((group) => {
+                          const isSelected =
+                            practiceSelection.mode === "specific" &&
+                            practiceSelection.setIds?.includes(topic.id) &&
+                            practiceSelection.groupNames?.includes(group);
+
+                          return (
+                            <button
+                              key={`${topic.id}-${group}`}
+                              className={`practice-option practice-option-sub ${
+                                isSelected ? "active" : ""
+                              }`}
+                              onClick={() => {
+                                if (practiceSelection.mode === "all") {
+                                  handlePracticeSelectionChange({
+                                    mode: "specific",
+                                    setIds: [topic.id],
+                                    groupNames: [group],
+                                  });
+                                } else {
+                                  const setIds = practiceSelection.setIds || [];
+                                  const groupNames =
+                                    practiceSelection.groupNames || [];
+
+                                  if (isSelected) {
+                                    // Remove
+                                    const newSetIds = setIds.filter(
+                                      (id) =>
+                                        id !== topic.id ||
+                                        !groupNames.includes(group)
+                                    );
+                                    const newGroupNames = groupNames.filter(
+                                      (g) =>
+                                        g !== group ||
+                                        !setIds.includes(topic.id)
+                                    );
+
+                                    handlePracticeSelectionChange(
+                                      newSetIds.length === 0
+                                        ? { mode: "all" }
+                                        : {
+                                            mode: "specific",
+                                            setIds: newSetIds,
+                                            groupNames: newGroupNames,
+                                          }
+                                    );
+                                  } else {
+                                    // Add
+                                    handlePracticeSelectionChange({
+                                      mode: "specific",
+                                      setIds: [
+                                        ...new Set([...setIds, topic.id]),
+                                      ],
+                                      groupNames: [
+                                        ...new Set([...groupNames, group]),
+                                      ],
+                                    });
+                                  }
+                                }
+                              }}
+                            >
+                              <div className="practice-checkbox">
+                                {isSelected && (
+                                  <div className="practice-check">✓</div>
+                                )}
+                              </div>
+                              <span>{group}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+    );
+  }
+
   // Topic detail view - Category grid
   if (view === "topic" && selectedTopic) {
     const categories = Object.entries(itemsByGroup).map(([name, items]) => ({
@@ -525,6 +752,12 @@ export default function App() {
             Manage your learning content and practice sets
           </p>
         </motion.div>
+        <button
+          className="settings-icon-button"
+          onClick={() => setView("settings")}
+        >
+          <IoSettingsOutline />
+        </button>
       </div>
 
       {/* Create new set card */}

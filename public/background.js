@@ -34,13 +34,32 @@ async function initTestData() {
 }
 
 async function getAllItems() {
-  const result = await chrome.storage.local.get("apertum.spaces");
+  const result = await chrome.storage.local.get([
+    "apertum.spaces",
+    "apertum.practiceSelection",
+  ]);
   const spaces = result["apertum.spaces"] || [];
+  const selection = result["apertum.practiceSelection"] || { mode: "all" };
   const allItems = [];
+
   spaces.forEach((space) => {
     space.sets.forEach((set) => {
       set.items.forEach((item) => {
-        allItems.push({ ...item, setName: set.name, spaceName: space.name });
+        // Filter based on practice selection
+        if (selection.mode === "all") {
+          allItems.push({ ...item, setName: set.name, spaceName: space.name });
+        } else if (selection.mode === "specific") {
+          const setIds = selection.setIds || [];
+          const groupNames = selection.groupNames || [];
+
+          if (setIds.includes(space.id) && groupNames.includes(item.group)) {
+            allItems.push({
+              ...item,
+              setName: set.name,
+              spaceName: space.name,
+            });
+          }
+        }
       });
     });
   });
@@ -54,12 +73,17 @@ function getRandomItem(items) {
 let currentQuestion = null;
 
 // Set up alarm
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
   console.log("Apertum: Extension installed, creating alarm");
   initTestData();
+
+  // Get stored interval or default to 10 minutes
+  const result = await chrome.storage.local.get("apertum.reminderInterval");
+  const interval = result["apertum.reminderInterval"] || 10;
+
   chrome.alarms.create("showQuestion", {
-    delayInMinutes: 1,
-    periodInMinutes: 1,
+    delayInMinutes: interval,
+    periodInMinutes: interval,
   });
 });
 
@@ -67,6 +91,15 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   console.log("Apertum: Alarm fired", alarm.name);
   if (alarm.name === "showQuestion") {
+    // Check if reminders are enabled
+    const settings = await chrome.storage.local.get("apertum.reminderEnabled");
+    const enabled = settings["apertum.reminderEnabled"] !== false; // Default true
+
+    if (!enabled) {
+      console.log("Apertum: Reminders disabled, skipping");
+      return;
+    }
+
     const items = await getAllItems();
     if (items.length === 0) return;
 
@@ -136,4 +169,44 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
       console.error("Apertum: Error:", error);
     }
   }
+});
+
+// Listen for interval updates from the UI
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "UPDATE_INTERVAL") {
+    const interval = message.interval;
+    console.log(`Apertum: Updating alarm interval to ${interval} minutes`);
+
+    // Clear existing alarm
+    chrome.alarms.clear("showQuestion", () => {
+      // Create new alarm with updated interval
+      chrome.alarms.create("showQuestion", {
+        delayInMinutes: interval,
+        periodInMinutes: interval,
+      });
+      console.log(`Apertum: Alarm updated to ${interval} minutes`);
+    });
+
+    sendResponse({ success: true });
+  } else if (message.type === "TOGGLE_REMINDER") {
+    const enabled = message.enabled;
+    console.log(`Apertum: Reminders ${enabled ? "enabled" : "disabled"}`);
+
+    if (enabled) {
+      // Re-enable by creating alarm with stored interval
+      chrome.storage.local.get("apertum.reminderInterval", (result) => {
+        const interval = result["apertum.reminderInterval"] || 10;
+        chrome.alarms.create("showQuestion", {
+          delayInMinutes: interval,
+          periodInMinutes: interval,
+        });
+      });
+    } else {
+      // Disable by clearing alarm
+      chrome.alarms.clear("showQuestion");
+    }
+
+    sendResponse({ success: true });
+  }
+  return true;
 });

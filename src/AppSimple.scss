@@ -740,3 +740,220 @@
   color: $neutral-600;
   font-size: $text-sm;
 }
+
+// Settings
+.settings-icon-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: $neutral-600;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    color: $blue-600;
+    background: $blue-100;
+  }
+}
+
+.settings-section {
+  margin-top: 32px;
+}
+
+.settings-label {
+  font-size: $text-md;
+  font-weight: $weight-medium;
+  color: $neutral-900;
+  margin-bottom: 16px;
+}
+
+.interval-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.interval-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: $neutral-00;
+  border: 2px solid $neutral-200;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: $text-md;
+  color: $neutral-700;
+  text-align: left;
+
+  &:hover {
+    border-color: $blue-400;
+    background: $blue-100;
+  }
+
+  &.active {
+    border-color: $blue-600;
+    background: $blue-100;
+    color: $blue-900;
+  }
+}
+
+.interval-radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid $neutral-400;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  .interval-option.active & {
+    border-color: $blue-600;
+  }
+}
+
+.interval-radio-dot {
+  width: 10px;
+  height: 10px;
+  background: $blue-600;
+  border-radius: 50%;
+}
+
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-description {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin-top: 4px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: $neutral-300;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
+
+  &.active {
+    background: $blue-600;
+  }
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: $neutral-00;
+  border-radius: 50%;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  .toggle-switch.active & {
+    transform: translateX(24px);
+  }
+}
+
+.practice-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.practice-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: $neutral-00;
+  border: 2px solid $neutral-200;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: $text-md;
+  color: $neutral-700;
+  text-align: left;
+
+  &:hover {
+    border-color: $blue-400;
+    background: $blue-100;
+  }
+
+  &.active {
+    border-color: $blue-600;
+    background: $blue-100;
+    color: $blue-900;
+  }
+}
+
+.practice-option-sub {
+  margin-left: 24px;
+  font-size: $text-sm;
+}
+
+.practice-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid $neutral-400;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  .practice-option.active & {
+    border-color: $blue-600;
+    background: $blue-600;
+  }
+}
+
+.practice-check {
+  color: $neutral-00;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.practice-divider {
+  font-size: $text-sm;
+  color: $neutral-600;
+  margin: 8px 0 4px 0;
+  font-weight: $weight-medium;
+}
+
+.practice-topic-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.practice-topic-name {
+  font-size: $text-sm;
+  font-weight: $weight-semibold;
+  color: $neutral-800;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
